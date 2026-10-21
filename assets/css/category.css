@@ -1,0 +1,495 @@
+/* filepath: assets/css/category.css */
+/* ============================================================
+   CATEGORY PAGES — GỐM SỨ, GỖ, MÂY TRE, SƠN MÀI...
+============================================================ */
+.category-page {
+    min-height: 80vh;
+}
+
+/* --- Banner Hero --- */
+.category-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: #99A98F;
+    border-bottom: 1px solid var(--cream2);
+    min-height: 420px;
+    max-height: 520px;
+    height: 520px;
+}
+
+.category-image-wrap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.category-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+.category-hero-content {
+    padding: 80px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.category-title {
+    font-family: var(--font-menu);
+    font-size: 56px;
+    font-weight: 400;
+    color: #1A1C18;
+    margin-bottom: 24px;
+    letter-spacing: -1px;
+}
+
+.category-desc {
+    font-family: var(--font-menu);
+    font-size: 16px;
+    color: #1A1C18;
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+/* ============================================================
+   TOOLBAR (Bộ đếm + Lọc + Sort)
+============================================================ */
+.products-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    font-family: var(--font-menu);
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-family: var(--font-menu);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-filter {
+    background: #ffffff;
+    border: 1px solid #D3D1C7;
+    color: var(--ink);
+}
+.btn-filter:hover { border-color: var(--ink); }
+.btn-filter.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+}
+
+/* Badge số lượng filter đang active */
+.filter-badge-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--rust);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.item-count {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 400;
+}
+
+/* --- Tags filter đang active --- */
+.active-filter-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #fff;
+    border: 1px solid var(--ink);
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: 0.2s;
+}
+.filter-tag:hover {
+    background: #FAECE7;
+    border-color: var(--rust);
+    color: var(--rust);
+}
+.filter-tag svg { flex-shrink: 0; }
+
+.tag-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.15);
+    flex-shrink: 0;
+}
+
+.filter-clear-all {
+    font-family: var(--font-menu);
+    font-size: 13px;
+    color: var(--ink3);
+    text-decoration: underline;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+.filter-clear-all:hover { color: var(--rust); }
+
+/* --- Sort Dropdown --- */
+.sort-dropdown-wrapper { position: relative; }
+
+.btn-sort {
+    background: #1A1C18;
+    border: 1px solid #1A1C18;
+    color: #ffffff;
+}
+.btn-sort:hover { background: #000000; }
+
+.sort-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    background: #ffffff;
+    border: 1px solid var(--cream2);
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+}
+.sort-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.sort-item {
+    padding: 12px 24px;
+    font-size: 14px;
+    color: var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+}
+.sort-item:hover { background: #F6F3EE; }
+.sort-item.active { font-weight: 600; }
+
+/* ============================================================
+   LAYOUT 2 CỘT: Filter sidebar + Grid sản phẩm
+============================================================ */
+.filter-product-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* ============================================================
+   FILTER PANEL (sidebar bên trái)
+============================================================ */
+.filter-panel {
+    background: #ffffff;
+    border: 1px solid var(--cream2);
+    border-radius: 16px;
+    padding: 24px;
+    position: sticky;
+    top: 140px; /* sticky dưới header */
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.filter-panel.hidden {
+    display: none;
+}
+
+/* Khi ẩn panel: lưới chiếm full width */
+.filter-panel.hidden ~ .products-grid-wrapper {
+    grid-column: 1 / -1;
+}
+
+.filter-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.filter-panel-title {
+    font-family: var(--font-menu);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+}
+
+.filter-panel-clear {
+    font-family: var(--font-menu);
+    font-size: 12px;
+    color: var(--ink3);
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+.filter-panel-clear:hover { color: var(--rust); }
+
+/* Đường kẻ phân cách giữa các nhóm */
+.filter-divider {
+    height: 1px;
+    background: var(--cream2);
+    margin: 16px 0;
+}
+
+/* --- Nhóm filter --- */
+
+.filter-group-title {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 8px 0;
+    font-family: var(--font-menu);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.filter-group-title:hover { color: var(--rust); }
+
+.fg-chevron {
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+}
+
+/* Body của nhóm filter — collapsed/open */
+.filter-group-body {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.25s ease;
+    padding-top: 0;
+}
+.filter-group-body.open {
+    max-height: 400px;
+    opacity: 1;
+    padding-top: 12px;
+}
+/* Chevron rotate khi mở */
+.filter-group-title.collapsed .fg-chevron {
+    transform: rotate(-90deg);
+}
+
+/* --- Các tùy chọn dạng checkbox --- */
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 6px;
+    border-radius: 8px;
+    font-family: var(--font-menu);
+    font-size: 14px;
+    color: var(--ink2);
+    cursor: pointer;
+    transition: 0.15s;
+    text-decoration: none;
+}
+.filter-option:hover {
+    background: #F6F3EE;
+    color: var(--ink);
+}
+.filter-option.checked { color: var(--ink); font-weight: 600; }
+
+/* Ô checkbox tùy chỉnh */
+.filter-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--cream2);
+    border-radius: 4px;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: 0.15s;
+}
+.filter-option.checked .filter-checkbox {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+}
+.filter-option:hover .filter-checkbox {
+    border-color: var(--ink);
+}
+
+/* --- Màu sắc: dạng swatch tròn --- */
+.color-swatches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-swatch-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+    text-decoration: none;
+}
+.color-swatch-item:hover { background: #F6F3EE; }
+.color-swatch-item.checked .color-label {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.color-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+}
+.color-swatch-item:hover .color-swatch { transform: scale(1.12); }
+.color-swatch-item.checked .color-swatch {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--ink);
+}
+
+.swatch-check { display: block; }
+
+.color-label {
+    font-family: var(--font-menu);
+    font-size: 14px;
+    color: var(--ink2);
+    transition: color 0.15s;
+}
+.color-swatch-item:hover .color-label { color: var(--ink); }
+
+/* ============================================================
+   PRODUCTS GRID (bên phải — chỉ trong trang danh mục)
+============================================================ */
+.products-grid-wrapper { min-width: 0; }
+
+/* Override 3 cột chỉ khi nằm trong layout filter của trang danh mục */
+.products-grid-wrapper .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+/* Trạng thái không có sản phẩm */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--ink3);
+}
+.no-results-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+.no-results p {
+    font-family: var(--font-menu);
+    font-size: 16px;
+    color: var(--ink2);
+}
+
+/* ============================================================
+   Ẩn/Hiện panel (toggle JS)
+   Khi panel bị ẩn, layout trở thành 1 cột
+============================================================ */
+.filter-product-layout.panel-hidden {
+    grid-template-columns: 1fr;
+}
+.filter-product-layout.panel-hidden .filter-panel {
+    display: none;
+}
+/* ============================================================
+   SALE PAGE — Grid + badge giá gốc gạch ngang
+============================================================ */
+
+/* Grid riêng cho trang sale (không nằm trong filter-product-layout) */
+.sale-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    padding-top: 32px;
+}
+
+/* Badge giá cũ gạch ngang — góc dưới trái ảnh */
+.sale-old-price-badge {
+    position: absolute;
+    bottom: 48px;
+    left: 12px;
+    font-family: var(--font-menu);
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    background: rgba(0,0,0,0.35);
+    padding: 2px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(2px);
+}
+.sale-old-price-badge s {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,255,255,0.7);
+}
+
+/* Đảm bảo card trong trang sale có cursor mặc định (không phải pointer toàn card) */
+.sale-products-grid .product-card {
+    cursor: default;
+}
+.sale-products-grid .product-card .product-img {
+    cursor: pointer;
+}
+.sale-products-grid .product-card .product-name {
+    cursor: pointer;
+}
