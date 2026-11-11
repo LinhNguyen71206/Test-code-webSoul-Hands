@@ -2,6 +2,7 @@
 ob_start();
 session_start();
 require_once 'config/database.php';
+require_once 'includes/shop_helpers.php';
 
 // Chỉ user đã đăng nhập mới xem được
 if (!isset($_SESSION['user_id'])) {
@@ -22,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'cancel' && $order_id > 0) {
         // Kiểm tra đơn thuộc user này và đang pending
-        $chk = $conn->prepare("SELECT id, status FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
+        $chk = $conn->prepare("SELECT id, status, coupon_code FROM orders WHERE id = ? AND user_id = ? LIMIT 1");
         $chk->bind_param('ii', $order_id, $user_id);
         $chk->execute();
         $row = $chk->get_result()->fetch_assoc();
@@ -38,9 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ];
             echo json_encode(['success' => false, 'message' => $msgs[$row['status']] ?? 'Không thể hủy đơn hàng này.']);
         } else {
-            $upd = $conn->prepare("UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND user_id = ?");
+            $upd = $conn->prepare("UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = ? AND user_id = ? AND status = 'pending'");
             $upd->bind_param('ii', $order_id, $user_id);
             $upd->execute();
+            if ($upd->affected_rows > 0 && !empty($row['coupon_code'])) {
+                release_coupon($conn, $row['coupon_code']); // trả lại 1 lượt dùng mã giảm giá
+            }
             echo json_encode(['success' => true, 'message' => 'Đơn hàng đã được hủy thành công.']);
         }
     } else {
@@ -57,10 +61,12 @@ $where = "WHERE o.user_id = ?";
 $params = [$user_id];
 $types  = 'i';
 
-if ($filter_status && in_array($filter_status, $allowed_statuses)) {
+if ($filter_status && in_array($filter_status, $allowed_statuses, true)) {
     $where  .= " AND o.status = ?";
     $params[] = $filter_status;
     $types   .= 's';
+} else {
+    $filter_status = ''; // giá trị lạ → coi như không lọc
 }
 
 // Lấy danh sách đơn hàng
@@ -101,6 +107,9 @@ $payment_labels = [
     'bank' => 'Chuyển khoản',
     'momo' => 'MoMo',
 ];
+
+// Cờ an toàn khi nhúng JSON vào thẻ <script> (chặn "</script>", dấu nháy...)
+$json_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 ?>
 <?php include 'includes/header.php'; ?>
 
@@ -886,7 +895,7 @@ $payment_labels = [
                     <div class="order-item-count"><?= $order['item_count'] ?> sản phẩm</div>
                     <div class="order-payment-method">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                        <?= $payment_labels[$order['payment_method']] ?? $order['payment_method'] ?>
+                        <?= htmlspecialchars($payment_labels[$order['payment_method']] ?? $order['payment_method']) ?>
                         <?php if ($order['payment_status'] === 'paid'): ?>
                         · <span style="color:#16A34A;">Đã thanh toán</span>
                         <?php endif; ?>
@@ -899,12 +908,12 @@ $payment_labels = [
                         <div class="order-total-label">Tổng tiền</div>
                         <div class="order-total-amount"><?= number_format($order['total'], 0, ',', '.') ?>đ</div>
                     </div>
-                    <button class="order-detail-btn" onclick="openOrderModal(<?= $order['id'] ?>)">
+                    <button class="order-detail-btn" onclick="openOrderModal(<?= (int)$order['id'] ?>)">
                         Chi tiết
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                     <?php if ($order['status'] === 'pending'): ?>
-                    <button class="order-cancel-btn" onclick="confirmCancelOrder(<?= $order['id'] ?>, '<?= htmlspecialchars($order['order_code']) ?>')">
+                    <button class="order-cancel-btn" onclick="confirmCancelOrder(<?= (int)$order['id'] ?>)">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         Hủy đơn
                     </button>
@@ -947,10 +956,10 @@ $payment_labels = [
 
 <!-- Dữ liệu đơn hàng nhúng sẵn (PHP → JS) -->
 <script>
-const ALL_ORDERS = <?= json_encode(array_column($orders, null, 'id')) ?>;
+const ALL_ORDERS = <?= json_encode(array_column($orders, null, 'id'), $json_flags) ?>;
 
-const STATUS_LABELS = <?= json_encode($status_labels) ?>;
-const PAYMENT_LABELS = <?= json_encode($payment_labels) ?>;
+const STATUS_LABELS = <?= json_encode($status_labels, $json_flags) ?>;
+const PAYMENT_LABELS = <?= json_encode($payment_labels, $json_flags) ?>;
 
 // Dữ liệu order_items cho từng đơn (load sẵn)
 const ALL_ITEMS = {};
@@ -961,9 +970,19 @@ foreach ($orders as $order) {
     $oi->bind_param('i', $order['id']);
     $oi->execute();
     $oi_data = $oi->get_result()->fetch_all(MYSQLI_ASSOC);
-    echo "ALL_ITEMS[" . $order['id'] . "] = " . json_encode($oi_data) . ";\n";
+    echo "ALL_ITEMS[" . (int)$order['id'] . "] = " . json_encode($oi_data, $json_flags) . ";\n";
 }
 ?>
+
+// ---- Escape HTML: BẮT BUỘC dùng cho mọi dữ liệu ghép vào innerHTML ----
+function esc(v) {
+    return String(v == null ? '' : v)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 // ---- Timeline helper ----
 const TL_STEPS = [
@@ -1008,13 +1027,7 @@ function openOrderModal(orderId) {
     const items = ALL_ITEMS[orderId] || [];
     if (!order) return;
 
-    const st = STATUS_LABELS[order.status] || { label: order.status, color: '#888', bg: '#f5f5f5', icon: '?' };
     const pm = PAYMENT_LABELS[order.payment_method] || order.payment_method;
-
-    // Format ngày
-    const dateStr = order.created_at
-        ? new Date(order.created_at.replace(' ', 'T')).toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })
-        : '';
 
     // Format tiền
     const fmt = n => Number(n).toLocaleString('vi-VN') + 'đ';
@@ -1022,26 +1035,26 @@ function openOrderModal(orderId) {
     // Build items HTML
     let itemsHtml = items.map(function(it) {
         const imgHtml = it.product_image
-            ? `<img src="${it.product_image}" alt="${it.product_name}">`
+            ? `<img src="${esc(it.product_image)}" alt="${esc(it.product_name)}">`
             : `<div class="modal-item-placeholder">🏺</div>`;
         return `<div class="modal-item">
             <div class="modal-item-img">${imgHtml}</div>
             <div style="flex:1;min-width:0;">
-                <div class="modal-item-name">${it.product_name}</div>
-                <div class="modal-item-qty">x${it.quantity} · ${fmt(it.unit_price)}/sp</div>
+                <div class="modal-item-name">${esc(it.product_name)}</div>
+                <div class="modal-item-qty">x${Number(it.quantity)} · ${fmt(it.unit_price)}/sp</div>
             </div>
             <div class="modal-item-price">${fmt(it.subtotal)}</div>
         </div>`;
     }).join('');
 
-    // Build nội dung modal
+    // Tiêu đề modal (textContent nên an toàn)
     document.getElementById('modal-order-code').textContent = order.order_code;
 
-    // Nút hủy trong modal (chỉ khi pending)
+    // Nút hủy trong modal (chỉ khi pending) — chỉ truyền id dạng số
     const modalHeader = document.getElementById('order-modal-header-actions');
     if (modalHeader) {
         if (order.status === 'pending') {
-            modalHeader.innerHTML = `<button class="order-cancel-btn" style="font-size:13px;padding:8px 18px;" onclick="confirmCancelOrder(${order.id}, '${order.order_code}')">
+            modalHeader.innerHTML = `<button class="order-cancel-btn" style="font-size:13px;padding:8px 18px;" onclick="confirmCancelOrder(${Number(order.id)})">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 Hủy đơn hàng
             </button>`;
@@ -1070,19 +1083,19 @@ function openOrderModal(orderId) {
             <div class="modal-info-grid">
                 <div class="modal-info-box">
                     <div class="modal-info-label">Người nhận</div>
-                    <div class="modal-info-val">${order.receiver_name}</div>
+                    <div class="modal-info-val">${esc(order.receiver_name)}</div>
                 </div>
                 <div class="modal-info-box">
                     <div class="modal-info-label">Số điện thoại</div>
-                    <div class="modal-info-val">${order.receiver_phone}</div>
+                    <div class="modal-info-val">${esc(order.receiver_phone)}</div>
                 </div>
                 <div class="modal-info-box full">
                     <div class="modal-info-label">Địa chỉ</div>
-                    <div class="modal-info-val">${order.full_address}</div>
+                    <div class="modal-info-val">${esc(order.full_address)}</div>
                 </div>
                 ${order.note ? `<div class="modal-info-box full">
                     <div class="modal-info-label">Ghi chú</div>
-                    <div class="modal-info-val" style="font-weight:400;color:var(--ink2);">${order.note}</div>
+                    <div class="modal-info-val" style="font-weight:400;color:var(--ink2);">${esc(order.note)}</div>
                 </div>` : ''}
             </div>
         </div>
@@ -1100,7 +1113,7 @@ function openOrderModal(orderId) {
                     <span>${Number(order.shipping_fee) === 0 ? '<span style="color:#16A34A;">Miễn phí</span>' : fmt(order.shipping_fee)}</span>
                 </div>
                 ${Number(order.discount) > 0 ? `<div class="modal-money-row" style="color:#16A34A;">
-                    <span>Giảm giá ${order.coupon_code ? '(' + order.coupon_code + ')' : ''}</span>
+                    <span>Giảm giá ${order.coupon_code ? '(' + esc(order.coupon_code) + ')' : ''}</span>
                     <span>-${fmt(order.discount)}</span>
                 </div>` : ''}
                 <div class="modal-money-divider"></div>
@@ -1109,7 +1122,7 @@ function openOrderModal(orderId) {
                     <span class="modal-money-total-num">${fmt(order.total)}</span>
                 </div>
                 <div style="font-family:var(--font-mono);font-size:11px;color:var(--ink3);text-align:right;margin-top:2px;">
-                    ${pm} · ${order.payment_status === 'paid' ? '<span style="color:#16A34A;">Đã thanh toán</span>' : 'Chưa thanh toán'}
+                    ${esc(pm)} · ${order.payment_status === 'paid' ? '<span style="color:#16A34A;">Đã thanh toán</span>' : 'Chưa thanh toán'}
                 </div>
             </div>
         </div>
@@ -1132,12 +1145,11 @@ document.addEventListener('keydown', function(e) {
 // ============================================================
 // HỦY ĐƠN HÀNG — Confirm modal + fetch
 // ============================================================
-let _cancelOrderId   = null;
-let _cancelOrderCode = null;
+let _cancelOrderId = null;
 
-function confirmCancelOrder(orderId, orderCode) {
-    _cancelOrderId   = orderId;
-    _cancelOrderCode = orderCode;
+function confirmCancelOrder(orderId) {
+    _cancelOrderId = orderId;
+    const orderCode = (ALL_ORDERS[orderId] || {}).order_code || '';
 
     // Tạo modal confirm nếu chưa có
     if (!document.getElementById('sh-confirm-modal')) {
@@ -1154,7 +1166,7 @@ function confirmCancelOrder(orderId, orderCode) {
                     <button class="sh-confirm-btn sh-confirm-btn-cancel" onclick="closeCancelConfirm()">
                         Giữ đơn
                     </button>
-                    <button class="sh-confirm-btn sh-confirm-btn-confirm" id="sh-confirm-ok" onclick="doCancel('order')">
+                    <button class="sh-confirm-btn sh-confirm-btn-confirm" id="sh-confirm-ok" onclick="doCancel()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         Xác nhận hủy
                     </button>
@@ -1164,7 +1176,7 @@ function confirmCancelOrder(orderId, orderCode) {
     }
 
     document.getElementById('sh-confirm-desc').innerHTML =
-        `Bạn chắc chắn muốn hủy đơn hàng <strong>${orderCode}</strong>?<br>
+        `Bạn chắc chắn muốn hủy đơn hàng <strong>${esc(orderCode)}</strong>?<br>
         <span style="color:#DC2626;font-size:13px;">Thao tác này không thể hoàn tác.</span>`;
     document.getElementById('sh-confirm-modal').style.display = 'flex';
     document.body.style.overflow = 'hidden';
@@ -1176,22 +1188,16 @@ function closeCancelConfirm() {
     document.body.style.overflow = '';
 }
 
-async function doCancel(type) {
+async function doCancel() {
     const btn = document.getElementById('sh-confirm-ok');
     btn.disabled = true;
     btn.textContent = 'Đang hủy...';
 
     try {
-        const payload = type === 'order'
-            ? { action: 'cancel', order_id: _cancelOrderId }
-            : { action: 'cancel', booking_id: _cancelOrderId };
-
-        const endpoint = type === 'order' ? 'orders.php' : 'my-workshops.php';
-
-        const res  = await fetch(endpoint, {
+        const res  = await fetch('orders.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ action: 'cancel', order_id: _cancelOrderId })
         });
         const data = await res.json();
 
@@ -1210,10 +1216,11 @@ async function doCancel(type) {
         closeCancelConfirm();
         showToast('⚠ Lỗi kết nối, vui lòng thử lại.', 'error');
         btn.disabled = false;
+        btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Xác nhận hủy';
     }
 }
 
-// Toast helper
+// Toast helper (dùng textContent nên an toàn)
 let _toastTimer;
 function showToast(msg, type = '') {
     let toast = document.getElementById('sh-global-toast');

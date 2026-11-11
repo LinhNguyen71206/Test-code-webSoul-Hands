@@ -10,10 +10,10 @@ require_once 'config/database.php';
   <div class="hero-content">
     <div class="hero-tag"><span class="dot"></span> Thủ công · Bát Tràng · Việt Nam</div>
     <h1 class="hero-title">Nơi đôi tay<br><em>kể chuyện</em><br>linh hồn</h1>
-    <p class="hero-sub">Mỗi sản phẩm là một tác phẩm độc bản — mua về để trân trọng, hoặc đến để tự tay tạo ra cái của riêng mình.</p>
+    <p class="hero-sub">Mỗi sản phẩm là một tác phẩm độc bản — mua về để trân trọng, hoặc tặng người thân như một món quà đầy tâm huyết.</p>
     <div class="hero-btns">
       <a href="gom-su.php" class="btn-primary btn-lg">Khám phá cửa hàng</a>
-      <a href="workshop.php" class="btn-outline btn-lg">Xem lịch workshop</a>
+      <a href="sale.php" class="btn-outline btn-lg">Xem ưu đãi</a>
     </div>    
   </div>
   
@@ -51,26 +51,26 @@ require_once 'config/database.php';
   
   <div class="products-grid">
     <?php
-    // Lấy 8 sản phẩm mới nhất từ DB
+    // Lấy 8 sản phẩm đầu tiên từ DB
     $sql_products = "SELECT p.*, c.name as category_name 
                      FROM products p 
                      JOIN categories c ON p.category_id = c.id 
                      ORDER BY p.id ASC LIMIT 8";
     $result_products = $conn->query($sql_products);
 
-    if ($result_products->num_rows > 0) {
+    if ($result_products && $result_products->num_rows > 0) {
         while($row = $result_products->fetch_assoc()) {
     ?>
     <div class="product-card">
         <div class="product-img" onclick="location.href='product.php?id=<?= $row['id'] ?>'">
             <?php if(!empty($row['image_url'])): ?>
-                <img src="<?= $row['image_url'] ?>" alt="<?= $row['name'] ?>" class="real-product-img">
+                <img src="<?= htmlspecialchars($row['image_url']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="real-product-img">
             <?php else: ?>
-                <div class="fallback-img <?= !empty($row['image_class']) ? $row['image_class'] : '' ?>"></div>
+                <div class="fallback-img <?= !empty($row['image_class']) ? htmlspecialchars($row['image_class']) : '' ?>"></div>
             <?php endif; ?>
 
             <?php if(!empty($row['badge'])): ?>
-                <div class="product-badge <?= ($row['badge'] == 'Mới') ? 'new-badge' : '' ?>"><?= $row['badge'] ?></div>
+                <div class="product-badge <?= ($row['badge'] == 'Mới') ? 'new-badge' : '' ?>"><?= htmlspecialchars($row['badge']) ?></div>
             <?php endif; ?>
 
             <div class="price-floating-badge">
@@ -79,7 +79,7 @@ require_once 'config/database.php';
         </div>
 
         <div class="product-body">
-            <h3 class="product-name" onclick="location.href='product.php?id=<?= $row['id'] ?>'"><?= $row['name'] ?></h3>
+            <h3 class="product-name" onclick="location.href='product.php?id=<?= $row['id'] ?>'"><?= htmlspecialchars($row['name']) ?></h3>
             <div class="product-actions">
                 <button class="btn-add-cart"
                     data-id="<?= $row['id'] ?>"
@@ -100,56 +100,11 @@ require_once 'config/database.php';
           </div>
     </div>
     <?php
-}
+        }
     } else {
         echo "<p>Chưa có sản phẩm nào.</p>";
     }
     ?>
-  </div>
-</section>
-
-<section class="ws-feature">
-  <!-- BÊN TRÁI: Chữ giới thiệu -->
-  <div class="ws-feature-left">
-    <div class="section-eyebrow light">Trải nghiệm thực tế</div>
-    <h2 class="section-title light">Tự tay tạo nên<br>dấu ấn riêng</h2>
-    <p class="ws-feature-desc">Tham gia các buổi workshop cùng nghệ nhân để hiểu về quy trình và tự tay hoàn thiện sản phẩm của chính mình.</p>
-    <a href="workshop.php" class="btn-outline">Khám phá tất cả workshop</a>
-  </div>
-
-  <!-- BÊN PHẢI: Lưới ảnh workshop với tên overlay -->
-  <div class="ws-feature-right">
-    <div class="ws-img-grid">
-      <?php
-      $ws_fallback_imgs = [
-          1 => 'https://sf-static.upanhlaylink.com/img/image_20260510a80aac45cbed8b6d1060d0f71f954605.jpg',
-          2 => 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=800&auto=format&fit=crop',
-          3 => 'https://sf-static.upanhlaylink.com/img/image_202605104bd5e177a488151c41e99481bd8069a9.jpg',
-      ];
-
-      $sql_ws = "SELECT * FROM workshops ORDER BY id ASC LIMIT 3";
-      $res_ws = $conn->query($sql_ws);
-      if ($res_ws && $res_ws->num_rows > 0):
-          while($ws = $res_ws->fetch_assoc()):
-              $img_src = !empty($ws['image_url'])
-                  ? $ws['image_url']
-                  : ($ws_fallback_imgs[$ws['id']] ?? $ws_fallback_imgs[1]);
-      ?>
-        <div class="ws-img-card" onclick="location.href='workshop.php?ws_id=<?= $ws['id'] ?>'">
-          <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($ws['name']) ?>" class="ws-img-bg">
-          <div class="ws-img-overlay"></div>
-          <div class="ws-img-content">
-
-            <h3 class="ws-img-name"><?= htmlspecialchars($ws['name']) ?></h3>
-            <div class="ws-img-meta"><?= htmlspecialchars($ws['duration_info']) ?> · <?= number_format($ws['price'], 0, ',', '.') ?>đ</div>
-            <span class="ws-img-btn">Đặt lịch →</span>
-          </div>
-        </div>
-      <?php
-          endwhile;
-      endif;
-      ?>
-    </div>
   </div>
 </section>
 
@@ -163,7 +118,7 @@ require_once 'config/database.php';
     </div>
     <div class="testimonial-card featured">
       <div class="stars">★★★★★</div>
-      <p>"Workshop nặn gốm là trải nghiệm tuyệt vời nhất tôi từng có. Nghệ nhân rất kiên nhẫn và tận tâm."</p>
+      <p>"Mua làm quà tặng, người nhận rất thích. Từng chi tiết đều thấy sự tỉ mỉ và tận tâm của nghệ nhân."</p>
       <div class="testimonial-author">— Thanh Tùng, TP.HCM</div>
     </div>
     <div class="testimonial-card">

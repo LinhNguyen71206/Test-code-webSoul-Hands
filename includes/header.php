@@ -11,9 +11,9 @@ if (session_status() === PHP_SESSION_NONE) {
     <title>Soul & Hands — Mỹ Nghệ Thủ Công</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Mono:wght@300;400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/category.css">
@@ -25,6 +25,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <script>
         window.SH_USER = {
             loggedIn: <?= $is_logged_in ? 'true' : 'false' ?>,
+            id: <?= $is_logged_in ? (int)$_SESSION['user_id'] : 'null' ?>,
             name: <?= $is_logged_in ? json_encode($_SESSION['user_name'] ?? '') : 'null' ?>
         };
     </script>
@@ -87,7 +88,6 @@ if (session_status() === PHP_SESSION_NONE) {
             </div>
         </div>
     </div>
-    <a href="workshop.php" class="nav-item" style="color: #D85A30; font-weight: 700;">Đặt lịch Workshop</a>
     <a href="ve-chung-toi.php" class="nav-item">Về chúng tôi</a>
 </div>
         
@@ -116,10 +116,6 @@ if (session_status() === PHP_SESSION_NONE) {
                         <a href="orders.php" class="user-menu-item">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                             Đơn hàng của tôi
-                        </a>
-                        <a href="my-workshops.php" class="user-menu-item">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                            Lịch Workshop của tôi
                         </a>
                         
                         <div class="user-menu-divider"></div>
@@ -170,7 +166,6 @@ if (session_status() === PHP_SESSION_NONE) {
 <div class="mobile-menu" id="mobileMenu">
     <ul>
         <li><a href="shop.php">Danh mục</a></li>
-        <li><a href="workshop.php">Đặt lịch Workshop</a></li>
         <li><a href="ve-chung-toi.php">Về chúng tôi</a></li>
         <?php if ($is_logged_in): ?>
         <li><a href="orders.php">Đơn hàng của tôi</a></li>
@@ -404,7 +399,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <script>
 /* ============================================================
-   LIVE SEARCH — Gọi search_suggest.php để lấy gợi ý
+   LIVE SEARCH — Gọi search_suggest.php để lấy gợi ý sản phẩm
 ============================================================ */
 (function() {
     const input   = document.getElementById('nav-search-input');
@@ -439,46 +434,28 @@ if (session_status() === PHP_SESSION_NONE) {
     }
 
     function renderResults(data, q) {
-        const { products = [], workshops = [] } = data;
+        const { products = [] } = data;
 
-        if (!products.length && !workshops.length) {
+        if (!products.length) {
             dropdown.innerHTML = '<div class="nsd-empty">Không tìm thấy kết quả nào cho "<strong>' + escHtml(q) + '</strong>"</div>';
             dropdown.classList.add('open');
             return;
         }
 
-        let html = '';
-
-        if (products.length) {
-            html += '<div class="nsd-section-label">Sản phẩm</div>';
-            products.forEach(p => {
-                const img = p.image_url
-                    ? `<img class="nsd-item-img" src="${escHtml(p.image_url)}" alt="" loading="lazy">`
-                    : `<div class="nsd-item-img-placeholder">🏺</div>`;
-                html += `<a href="product.php?id=${p.id}" class="nsd-item">
-                    ${img}
-                    <div class="nsd-item-info">
-                        <div class="nsd-item-name">${highlight(p.name, q)}</div>
-                        <div class="nsd-item-meta">${escHtml(p.category_name ?? '')}</div>
-                    </div>
-                    <span class="nsd-item-price">${fmtMoney(p.price)}</span>
-                </a>`;
-            });
-        }
-
-        if (workshops.length) {
-            html += '<div class="nsd-section-label">Workshop</div>';
-            workshops.forEach(w => {
-                html += `<a href="workshop.php?ws_id=${w.id}" class="nsd-item">
-                    <div class="nsd-item-img-placeholder">🎨</div>
-                    <div class="nsd-item-info">
-                        <div class="nsd-item-name">${highlight(w.name, q)}</div>
-                        <div class="nsd-item-meta">${escHtml(w.duration_info ?? '')}</div>
-                    </div>
-                    <span class="nsd-item-price">${fmtMoney(w.price)}</span>
-                </a>`;
-            });
-        }
+        let html = '<div class="nsd-section-label">Sản phẩm</div>';
+        products.forEach(p => {
+            const img = p.image_url
+                ? `<img class="nsd-item-img" src="${escHtml(p.image_url)}" alt="" loading="lazy">`
+                : `<div class="nsd-item-img-placeholder">🏺</div>`;
+            html += `<a href="product.php?id=${p.id}" class="nsd-item">
+                ${img}
+                <div class="nsd-item-info">
+                    <div class="nsd-item-name">${highlight(p.name, q)}</div>
+                    <div class="nsd-item-meta">${escHtml(p.category_name ?? '')}</div>
+                </div>
+                <span class="nsd-item-price">${fmtMoney(p.price)}</span>
+            </a>`;
+        });
 
         html += `<div class="nsd-footer">
             <a href="search.php?q=${encodeURIComponent(q)}" class="nsd-footer-link">

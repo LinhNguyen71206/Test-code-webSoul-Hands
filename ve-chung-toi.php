@@ -168,7 +168,7 @@
 
                 <div class="artisan-card">
                     <div class="artisan-img-wrap">
-                        <img src="assets/images/ndt.jpg " alt="Nghệ nhân Nguyễn Đức Thành" class="artisan-img">
+                        <img src="assets/images/ndt.jpg" alt="Nghệ nhân Nguyễn Đức Thành" class="artisan-img">
                     </div>
                     <div class="artisan-info">
                         <h3 class="artisan-name">Nguyễn Đức Thành</h3>
@@ -214,15 +214,6 @@
 
                 <div class="timeline-item">
                     <div class="tl-dot"></div>
-                    <div class="tl-year">2018</div>
-                    <div class="tl-content">
-                        <h4>Ra mắt Workshop đầu tiên</h4>
-                        <p>Buổi workshop nặn gốm đầu tiên với 8 khách. Đặt nền móng cho chuỗi trải nghiệm thủ công trực tiếp tại xưởng.</p>
-                    </div>
-                </div>
-
-                <div class="timeline-item">
-                    <div class="tl-dot"></div>
                     <div class="tl-year">2021</div>
                     <div class="tl-content">
                         <h4>Thêm dòng Sơn mài</h4>
@@ -253,11 +244,11 @@
         </div>
         <div class="about-cta-content">
             <div class="section-eyebrow light">Bắt đầu hành trình</div>
-            <h2 class="about-cta-title">Sở hữu một tác phẩm —<br>hoặc tự tay tạo ra</h2>
-            <p class="about-cta-sub">Mỗi sản phẩm là độc bản. Mỗi buổi workshop là ký ức không lặp lại.</p>
+            <h2 class="about-cta-title">Sở hữu một tác phẩm —<br>mang câu chuyện về nhà</h2>
+            <p class="about-cta-sub">Mỗi sản phẩm là độc bản, mang theo dấu tay của người làm ra nó.</p>
             <div class="about-cta-btns">
                 <a href="index.php" class="btn-primary btn-lg">Khám phá cửa hàng</a>
-                <a href="workshop.php" class="about-cta-link">Đặt lịch workshop →</a>
+                <a href="sale.php" class="about-cta-link">Xem ưu đãi →</a>
             </div>
         </div>
     </section>

@@ -2,7 +2,7 @@
 $host     = 'localhost';
 $username = 'root';
 $password = '';
-$database = 'soul_and_hands';
+$database = 'soul_hands_shop';
 
 $conn = new mysqli($host, $username, $password, $database);
 

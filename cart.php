@@ -1,5 +1,12 @@
-<?php include 'includes/header.php'; ?>
-
+<?php
+// Giỏ hàng chỉ dành cho khách đã đăng nhập
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+include 'includes/header.php';
+?>
 <main class="cart-page">
 
     <!-- ========== BREADCRUMB ========== -->

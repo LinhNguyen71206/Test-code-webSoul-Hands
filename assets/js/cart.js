@@ -1,23 +1,70 @@
 /* ============================================================
    SOUL & HANDS — Cart JS
-   Yêu cầu đăng nhập trước khi thêm giỏ hàng / mua ngay
+   Giỏ hàng chỉ dành cho khách đã đăng nhập và gắn với từng tài khoản.
+   (Việc chặn thật sự nằm ở server: cart.php và api/place_order.php
+    đều bắt đăng nhập — đoạn này chỉ để giao diện hợp lý.)
 ============================================================ */
 
+/* ---- Kiểm tra đăng nhập ---- */
+function isLoggedIn() {
+    return !!(window.SH_USER && window.SH_USER.loggedIn === true);
+}
+
+/* ---- Giỏ hàng thuộc về 1 tài khoản ----
+   - Chưa đăng nhập        → xóa sạch giỏ + thông tin giao hàng nháp trong trình duyệt
+   - Đổi sang tài khoản khác → xóa giỏ của người trước, gắn giỏ cho người mới */
+(function syncCartOwner() {
+    try {
+        if (!isLoggedIn()) {
+            localStorage.removeItem('sh_cart');
+            localStorage.removeItem('sh_cart_owner');
+            localStorage.removeItem('sh_ship_draft');
+            return;
+        }
+        var uid   = String(window.SH_USER.id);
+        var owner = localStorage.getItem('sh_cart_owner');
+        if (owner !== uid) {
+            localStorage.removeItem('sh_cart');
+            localStorage.removeItem('sh_ship_draft');
+            localStorage.setItem('sh_cart_owner', uid);
+        }
+    } catch (e) { /* trình duyệt chặn localStorage → bỏ qua */ }
+})();
+
+/* Xóa toàn bộ dữ liệu giỏ hàng lưu trong trình duyệt */
+function clearLocalCart() {
+    try {
+        localStorage.removeItem('sh_cart');
+        localStorage.removeItem('sh_cart_owner');
+        localStorage.removeItem('sh_ship_draft');
+    } catch (e) {}
+}
+
+/* Bấm nút Back sau khi đăng xuất: trình duyệt có thể hiện lại trang cũ từ bộ nhớ đệm
+   (vẫn ở trạng thái "đã đăng nhập" + còn số trên giỏ). Phát hiện và tải lại trang. */
+window.addEventListener('pageshow', function(e) {
+    if (e.persisted && isLoggedIn() && !localStorage.getItem('sh_cart_owner')) {
+        window.location.reload();
+    }
+});
+
+/* Giỏ hàng đổi ở tab khác (thêm, xóa, đăng xuất) → cập nhật số trên tab này */
+window.addEventListener('storage', function(e) {
+    if (e.key === 'sh_cart' || e.key === 'sh_cart_owner') updateCartBadge();
+});
+
 function getCart() {
+    if (!isLoggedIn()) return [];
     try { return JSON.parse(localStorage.getItem('sh_cart') || '[]'); }
     catch(e) { return []; }
 }
 function saveCart(cart) {
+    if (!isLoggedIn()) return;
     localStorage.setItem('sh_cart', JSON.stringify(cart));
     updateCartBadge();
 }
 function getCartCount() {
     return getCart().reduce(function(s,i){ return s+(i.qty||1); }, 0);
-}
-
-/* ---- Kiểm tra đăng nhập ---- */
-function isLoggedIn() {
-    return window.SH_USER && window.SH_USER.loggedIn === true;
 }
 
 /* ---- Modal yêu cầu đăng nhập ---- */
@@ -76,7 +123,7 @@ function addToCart(id, name, price, imageUrl) {
     var cart = getCart();
     var existing = null;
     for (var i = 0; i < cart.length; i++) {
-        if (cart[i].id === id) { existing = cart[i]; break; }
+        if (String(cart[i].id) === String(id)) { existing = cart[i]; break; }
     }
     if (existing) {
         existing.qty = (existing.qty || 1) + 1;
@@ -113,7 +160,7 @@ function updateCartBadge() {
     }
 }
 
-/* ---- Toast ---- */
+/* ---- Toast (dựng bằng textContent để tên sản phẩm không chèn được HTML) ---- */
 var toastTimer = null;
 function showCartToast(productName) {
     var toast = document.getElementById('cart-toast');
@@ -124,8 +171,14 @@ function showCartToast(productName) {
         document.body.appendChild(toast);
     }
     var shortName = productName.length > 30 ? productName.substring(0,30)+'…' : productName;
-    toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
-        +' Đã thêm "<strong>'+shortName+'</strong>" vào giỏ';
+
+    toast.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    toast.appendChild(document.createTextNode(' Đã thêm "'));
+    var strong = document.createElement('strong');
+    strong.textContent = shortName;
+    toast.appendChild(strong);
+    toast.appendChild(document.createTextNode('" vào giỏ'));
+
     toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 3000);
@@ -137,6 +190,11 @@ function showCartToast(productName) {
 document.addEventListener('DOMContentLoaded', function() {
 
     updateCartBadge();
+
+    /* Bấm Đăng xuất: xóa giỏ ngay lập tức, không chờ trang sau tải xong */
+    document.querySelectorAll('a[href$="logout.php"]').forEach(function(link) {
+        link.addEventListener('click', function() { clearLocalCart(); });
+    });
 
     /* Nút Thêm giỏ hàng */
     document.querySelectorAll('.btn-add-cart').forEach(function(btn) {

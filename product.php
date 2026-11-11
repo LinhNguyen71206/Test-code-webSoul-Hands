@@ -123,8 +123,7 @@ if (!empty($product['old_price']) && $product['old_price'] > 0) {
 
 /* ── Ảnh sản phẩm ── */
 .product-gallery {
-    position: sticky;
-    top: 20px;
+    position: relative;
     align-self: start;
 }
 
@@ -694,7 +693,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
     </div><!-- /product-info -->
 </div>
-
+<?php include 'includes/product-reviews.php'; ?>
 <!-- ── Sản phẩm liên quan ─────────────────────────────────── -->
 <?php if (!empty($related)): ?>
 <section class="related-section">

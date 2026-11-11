@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng ký — Soul & Hands</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=DM+Mono:wght@300;400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         body { background: var(--ink); }
@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="benefit-check">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
-                    <span class="auth-benefit-text">Đặt lịch workshop nhanh hơn, không cần nhập lại thông tin</span>
+                    <span class="auth-benefit-text">Lưu thông tin nhận hàng, đặt hàng nhanh hơn ở những lần sau</span>
                 </div>
                 <div class="auth-benefit-item">
                     <div class="benefit-check">
@@ -321,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1 class="auth-title">Tạo tài khoản</h1>
             <p class="auth-sub">
                 Đã có tài khoản?
-                <a href="index.php">Trang chủ →</a>
+                <a href="login.php">Đăng nhập →</a>
             </p>
 
             <form method="POST" class="auth-form" novalidate id="register-form">

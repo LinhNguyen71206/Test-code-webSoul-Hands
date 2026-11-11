@@ -26,15 +26,6 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Workshop</h4>
-      <ul>
-        <li><a href="workshop.php">Lịch workshop</a></li>
-        <li><a href="workshop.php">Nặn gốm</a></li>
-        <li><a href="workshop.php">Vẽ sơn mài</a></li>
-        <li><a href="workshop.php">Đan mây tre</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
       <h4>Hỗ trợ</h4>
       <ul>
         <li><a href="#">Chính sách đổi trả</a></li>
