@@ -82,7 +82,7 @@ $payment_labels = ['cod' => 'COD'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Soul & Hands</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
     /* ============================================================
@@ -125,7 +125,7 @@ $payment_labels = ['cod' => 'COD'];
         flex-shrink: 0;
     }
     .sidebar-logo-text {
-        font-family: 'Inter', sans-serif; font-weight: 600;
+        font-family: 'Cormorant Garamond', serif;
         font-size: 22px; color: #fff; letter-spacing: 3px;
     }
     .sidebar-logo-text em { font-style: normal; color: #C9A84C; }

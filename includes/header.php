@@ -11,12 +11,12 @@ if (session_status() === PHP_SESSION_NONE) {
     <title>Soul & Hands — Mỹ Nghệ Thủ Công</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     
     
     
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/category.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= @filemtime(__DIR__ . '/../assets/css/style.css') ?: 1 ?>">
+    <link rel="stylesheet" href="assets/css/category.css?v=<?= @filemtime(__DIR__ . '/../assets/css/category.css') ?: 1 ?>">
 
     <?php
     // Truyền trạng thái đăng nhập sang JS
@@ -29,6 +29,18 @@ if (session_status() === PHP_SESSION_NONE) {
             name: <?= $is_logged_in ? json_encode($_SESSION['user_name'] ?? '') : 'null' ?>
         };
     </script>
+    <?php if (!$is_logged_in): ?>
+    <!-- Khách chưa đăng nhập: xóa giỏ lưu trong trình duyệt và ẩn số trên biểu tượng giỏ.
+         Nằm ngay trong HTML do PHP tạo ra nên chạy được kể cả khi cart.js bị cache bản cũ. -->
+    <script>
+        try {
+            localStorage.removeItem('sh_cart');
+            localStorage.removeItem('sh_cart_owner');
+            localStorage.removeItem('sh_ship_draft');
+        } catch (e) {}
+    </script>
+    <style>.cart-count-badge { display: none !important; }</style>
+    <?php endif; ?>
 </head>
 <body>
 
