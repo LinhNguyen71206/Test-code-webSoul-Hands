@@ -1,6 +1,7 @@
 <?php 
 // 1. GỌI FILE KẾT NỐI DATABASE Ở ĐẦU TRANG
 require_once 'config/database.php'; 
+require_once 'includes/product-card.php';
 ?>
 
 <?php include 'includes/header.php'; ?>
@@ -59,47 +60,8 @@ require_once 'config/database.php';
     $result_products = $conn->query($sql_products);
 
     if ($result_products && $result_products->num_rows > 0) {
-        while($row = $result_products->fetch_assoc()) {
-    ?>
-    <div class="product-card">
-        <div class="product-img" onclick="location.href='product.php?id=<?= $row['id'] ?>'">
-            <?php if(!empty($row['image_url'])): ?>
-                <img src="<?= htmlspecialchars($row['image_url']) ?>" alt="<?= htmlspecialchars($row['name']) ?>" class="real-product-img">
-            <?php else: ?>
-                <div class="fallback-img <?= !empty($row['image_class']) ? htmlspecialchars($row['image_class']) : '' ?>"></div>
-            <?php endif; ?>
-
-            <?php if(!empty($row['badge'])): ?>
-                <div class="product-badge <?= ($row['badge'] == 'Mới') ? 'new-badge' : '' ?>"><?= htmlspecialchars($row['badge']) ?></div>
-            <?php endif; ?>
-
-            <div class="price-floating-badge">
-                <?= number_format($row['price'], 0, ',', '.') ?>đ
-            </div>
-        </div>
-
-        <div class="product-body">
-            <h3 class="product-name" onclick="location.href='product.php?id=<?= $row['id'] ?>'"><?= htmlspecialchars($row['name']) ?></h3>
-            <div class="product-actions">
-                <button class="btn-add-cart"
-                    data-id="<?= $row['id'] ?>"
-                    data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                    data-price="<?= (int)$row['price'] ?>"
-                    data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    Giỏ hàng
-                </button>
-                <button class="btn-buy-now"
-                    data-id="<?= $row['id'] ?>"
-                    data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                    data-price="<?= (int)$row['price'] ?>"
-                    data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                    Mua ngay
-                </button>
-            </div>
-          </div>
-    </div>
-    <?php
+        while ($row = $result_products->fetch_assoc()) {
+            render_product_card($row);
         }
     } else {
         echo "<p>Chưa có sản phẩm nào.</p>";

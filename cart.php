@@ -7,6 +7,7 @@ if (empty($_SESSION['user_id'])) {
 }
 include 'includes/header.php';
 ?>
+
 <main class="cart-page">
 
     <!-- ========== BREADCRUMB ========== -->
@@ -78,7 +79,6 @@ include 'includes/header.php';
                             <h3 class="sic-title">Thông tin nhận hàng</h3>
                             <p class="sic-sub">Điền thông tin để chúng tôi giao hàng đến bạn</p>
                         </div>
-                        <!-- Tag đã điền -->
                         <div class="sic-filled-tag" id="sic-filled-tag" style="display:none;">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                             Đã điền
@@ -89,25 +89,17 @@ include 'includes/header.php';
 
                         <div class="sic-row">
                             <div class="sic-field">
-                                <label class="sic-label">
-                                    Họ và tên
-                                    <span class="sic-required">*</span>
-                                </label>
+                                <label class="sic-label">Họ và tên <span class="sic-required">*</span></label>
                                 <input type="text" id="ship-name" class="sic-input" placeholder="Nguyễn Văn A" autocomplete="name">
                             </div>
                             <div class="sic-field">
-                                <label class="sic-label">
-                                    Số điện thoại
-                                    <span class="sic-required">*</span>
-                                </label>
+                                <label class="sic-label">Số điện thoại <span class="sic-required">*</span></label>
                                 <input type="tel" id="ship-phone" class="sic-input" placeholder="0901 234 567" autocomplete="tel">
                             </div>
                         </div>
 
                         <div class="sic-field">
-                            <label class="sic-label">
-                                Email
-                            </label>
+                            <label class="sic-label">Email</label>
                             <input type="email" id="ship-email" class="sic-input" placeholder="email@example.com" autocomplete="email">
                         </div>
 
@@ -143,10 +135,7 @@ include 'includes/header.php';
                         </div>
 
                         <div class="sic-field">
-                            <label class="sic-label">
-                                Địa chỉ cụ thể
-                                <span class="sic-required">*</span>
-                            </label>
+                            <label class="sic-label">Địa chỉ cụ thể <span class="sic-required">*</span></label>
                             <input type="text" id="ship-address" class="sic-input"
                                    placeholder="Số nhà, tên đường, tòa nhà..." autocomplete="street-address">
                         </div>
@@ -157,44 +146,16 @@ include 'includes/header.php';
                                       placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao, đóng gói kỹ..."></textarea>
                         </div>
 
-                        <!-- Phương thức thanh toán -->
+                        <!-- Phương thức thanh toán (hiện chỉ có COD) -->
                         <div class="sic-field">
                             <label class="sic-label">Phương thức thanh toán <span class="sic-required">*</span></label>
                             <div class="sic-payment-opts">
                                 <label class="sic-payment-opt">
                                     <input type="radio" name="payment" value="cod" checked>
                                     <span class="sic-payment-box">
-                                        <span class="sic-pay-icon"></span>
                                         <span class="sic-pay-label">Thanh toán khi nhận hàng (COD)</span>
                                     </span>
                                 </label>
-                                
-                            </div>
-                        </div>
-
-                        <!-- Thông tin chuyển khoản (hiện khi chọn bank) -->
-                        <div class="sic-bank-info" id="sic-bank-info" style="display:none;">
-                            <div class="sic-bank-row">
-                                <span class="sic-bank-label">Ngân hàng</span>
-                                <span class="sic-bank-value">Vietcombank</span>
-                            </div>
-                            <div class="sic-bank-row">
-                                <span class="sic-bank-label">Số tài khoản</span>
-                                <span class="sic-bank-value">
-                                    1234 5678 9012
-                                    <button class="sic-copy-btn" onclick="copyText('1234567890 12')">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                                        Sao chép
-                                    </button>
-                                </span>
-                            </div>
-                            <div class="sic-bank-row">
-                                <span class="sic-bank-label">Chủ tài khoản</span>
-                                <span class="sic-bank-value">NGUYEN HA LINH</span>
-                            </div>
-                            <div class="sic-bank-row">
-                                <span class="sic-bank-label">Nội dung CK</span>
-                                <span class="sic-bank-value sic-bank-note" id="bank-transfer-note">SH + SĐT của bạn</span>
                             </div>
                         </div>
 
@@ -266,9 +227,6 @@ include 'includes/header.php';
                         </div>
                     </div>
                 </div>
-
-                <!-- Sản phẩm đề xuất -->
-               
             </div>
 
         </div>
@@ -292,438 +250,172 @@ include 'includes/header.php';
 /* ============================================================
    CART PAGE
 ============================================================ */
-.cart-page {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 32px 40px 100px;
-    min-height: 70vh;
-}
+.cart-page { max-width: 1280px; margin: 0 auto; padding: 32px 40px 100px; min-height: 70vh; }
 
-/* Breadcrumb */
 .cart-breadcrumb {
     display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 12px;
-    color: var(--ink3); margin-bottom: 32px;
+    font-size: 12px; color: var(--ink3); margin-bottom: 32px;
 }
 .cart-breadcrumb a { color: var(--ink3); transition: color 0.2s; }
 .cart-breadcrumb a:hover { color: var(--rust); }
 
-/* Header */
 .cart-header {
     display: flex; align-items: baseline; gap: 16px;
-    margin-bottom: 40px;
-    border-bottom: 1px solid var(--cream2);
-    padding-bottom: 20px;
+    margin-bottom: 40px; border-bottom: 1px solid var(--cream2); padding-bottom: 20px;
 }
-.cart-title {
-    font-family: var(--font-display);
-    font-size: 56px; font-weight: 500;
-    color: var(--ink); letter-spacing: -1px;
-}
-.cart-header-count {
-    font-family: var(--font-mono); font-size: 13px;
-    color: var(--ink3); letter-spacing: 0.5px;
-}
+.cart-title { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--ink); letter-spacing: -1px; }
+.cart-header-count { font-size: 14px; color: var(--ink3); }
 
-/* Loading spinner */
 .cart-loading { display: flex; justify-content: center; padding: 80px 0; }
 .cart-spinner {
-    width: 36px; height: 36px;
-    border: 3px solid var(--cream2);
-    border-top-color: var(--rust);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    width: 36px; height: 36px; border: 3px solid var(--cream2);
+    border-top-color: var(--rust); border-radius: 50%; animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Empty state */
 .cart-empty { text-align: center; padding: 80px 20px; }
 .cart-empty-icon { font-size: 64px; margin-bottom: 24px; }
-.cart-empty-title {
-    font-family: var(--font-display); font-size: 40px;
-    font-weight: 500; color: var(--ink); margin-bottom: 12px;
-}
-.cart-empty-desc {
-    font-family: var(--font-menu); font-size: 15px;
-    color: var(--ink2); max-width: 420px; margin: 0 auto 32px; line-height: 1.7;
-}
+.cart-empty-title { font-family: var(--font-display); font-size: 36px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.cart-empty-desc { font-size: 15px; color: var(--ink2); max-width: 420px; margin: 0 auto 32px; line-height: 1.7; }
 .cart-empty-btns { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
-.cart-cat-link { font-family: var(--font-menu); font-size: 14px; color: var(--rust); font-weight: 600; transition: opacity 0.2s; }
+.cart-cat-link { font-size: 14px; color: var(--rust); font-weight: 600; transition: opacity 0.2s; }
 .cart-cat-link:hover { opacity: 0.7; }
 
-/* ---- Layout chính: cột trái rộng + cột phải summary ---- */
-.cart-layout {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 32px;
-    align-items: start;
-}
+/* Layout chính */
+.cart-layout { display: grid; grid-template-columns: 1fr 360px; gap: 32px; align-items: start; }
+.cart-main-col { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
 
-/* Cột trái chứa cả items + shipping info */
-.cart-main-col {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    min-width: 0;
-}
-
-/* ---- Danh sách sản phẩm ---- */
-.cart-items-col {
-    background: #fff;
-    border: 1px solid var(--cream2);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
+/* Danh sách sản phẩm */
+.cart-items-col { background: #fff; border: 1px solid var(--cream2); border-radius: 16px; overflow: hidden; }
 .cart-items-header {
-    display: grid;
-    grid-template-columns: 1fr 120px 140px 120px;
-    gap: 16px;
-    padding: 16px 20px;
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--ink3); text-transform: uppercase; letter-spacing: 1px;
-    background: var(--page);
-    border-bottom: 1px solid var(--cream2);
+    display: grid; grid-template-columns: 1fr 120px 140px 120px; gap: 16px;
+    padding: 16px 20px; font-size: 12px; font-weight: 600; color: var(--ink3);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    background: var(--page); border-bottom: 1px solid var(--cream2);
 }
-
 .cart-item {
-    display: grid;
-    grid-template-columns: 1fr 120px 140px 120px;
-    gap: 16px; align-items: center;
-    padding: 20px 20px;
-    border-bottom: 1px solid var(--cream2);
-    transition: background 0.15s;
+    display: grid; grid-template-columns: 1fr 120px 140px 120px; gap: 16px; align-items: center;
+    padding: 20px; border-bottom: 1px solid var(--cream2); transition: background 0.15s;
 }
 .cart-item:last-child { border-bottom: none; }
 .cart-item:hover { background: #FAFAF8; }
 
 .cart-item-product { display: flex; align-items: center; gap: 14px; }
-.cart-item-img {
-    width: 80px; height: 80px; border-radius: 10px; overflow: hidden;
-    flex-shrink: 0; background: var(--cream2); border: 1px solid var(--cream2);
-}
+.cart-item-img { width: 80px; height: 80px; border-radius: 10px; overflow: hidden; flex-shrink: 0; background: var(--cream2); border: 1px solid var(--cream2); }
 .cart-item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cart-item-img-placeholder {
-    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-    font-size: 28px; background: linear-gradient(135deg, #E8E4DC, #D4CFC4);
-}
-.cart-item-name {
-    font-family: var(--font-menu); font-size: 14px; font-weight: 600;
-    color: var(--ink); line-height: 1.4; margin-bottom: 6px;
-    cursor: pointer; transition: color 0.2s;
-}
+.cart-item-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 28px; background: linear-gradient(135deg, #E8E4DC, #D4CFC4); }
+.cart-item-name { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 6px; cursor: pointer; transition: color 0.2s; }
 .cart-item-name:hover { color: var(--rust); }
 .cart-item-remove {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-family: var(--font-mono); font-size: 11px;
-    color: var(--ink3); cursor: pointer; background: none; border: none; padding: 0;
-    transition: color 0.2s;
+    display: inline-flex; align-items: center; gap: 4px; font-size: 12px;
+    color: var(--ink3); cursor: pointer; background: none; border: none; padding: 0; transition: color 0.2s;
 }
 .cart-item-remove:hover { color: #DC2626; }
-.cart-item-price { font-family: var(--font-menu); font-size: 14px; color: var(--ink2); }
-.cart-item-qty {
-    display: flex; align-items: center;
-    border: 1.5px solid var(--cream2); border-radius: 8px;
-    overflow: hidden; width: fit-content; background: #fff;
-}
-.qty-btn {
-    width: 36px; height: 36px; background: none; border: none;
-    font-size: 18px; color: var(--ink); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: 0.15s;
-}
+.cart-item-price { font-size: 14px; color: var(--ink2); }
+.cart-item-qty { display: flex; align-items: center; border: 1.5px solid var(--cream2); border-radius: 8px; overflow: hidden; width: fit-content; background: #fff; }
+.qty-btn { width: 36px; height: 36px; background: none; border: none; font-size: 18px; color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.15s; }
 .qty-btn:hover { background: var(--page); color: var(--rust); }
-.qty-num {
-    width: 40px; text-align: center;
-    font-family: var(--font-menu); font-size: 14px; font-weight: 600;
-    color: var(--ink); border: none; background: #fff; outline: none;
-}
-.cart-item-total { font-family: var(--font-menu); font-size: 15px; font-weight: 700; color: var(--ink); }
+.qty-num { width: 40px; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); background: #fff; }
+.cart-item-total { font-size: 15px; font-weight: 700; color: var(--ink); }
 
-.cart-items-footer {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 20px; background: var(--page);
-    border-top: 1px solid var(--cream2);
-}
-.cart-clear-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: none; border: none; font-family: var(--font-menu);
-    font-size: 13px; color: var(--ink3); cursor: pointer; transition: color 0.2s;
-}
+.cart-items-footer { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: var(--page); border-top: 1px solid var(--cream2); }
+.cart-clear-btn { display: flex; align-items: center; gap: 6px; background: none; border: none; font-size: 13px; color: var(--ink3); cursor: pointer; transition: color 0.2s; }
 .cart-clear-btn:hover { color: #DC2626; }
-.cart-continue-link {
-    font-family: var(--font-menu); font-size: 13px; color: var(--rust);
-    font-weight: 600; transition: opacity 0.2s;
-}
+.cart-continue-link { font-size: 13px; color: var(--rust); font-weight: 600; transition: opacity 0.2s; }
 .cart-continue-link:hover { opacity: 0.7; }
 
-/* ================================================================
-   THÔNG TIN NHẬN HÀNG — Shipping Info Card
-================================================================ */
-.shipping-info-card {
-    background: #fff;
-    border: 1px solid var(--cream2);
-    border-radius: 16px;
-    overflow: hidden;
-}
-
-.sic-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 22px 24px;
-    background: var(--page);
-    border-bottom: 1px solid var(--cream2);
-}
-
-.sic-icon {
-    width: 40px; height: 40px;
-    background: var(--rust);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; flex-shrink: 0;
-}
-
-.sic-title {
-    font-family: var(--font-display);
-    font-size: 22px; font-weight: 500;
-    color: var(--ink); margin-bottom: 2px;
-}
-.sic-sub {
-    font-family: var(--font-menu); font-size: 13px; color: var(--ink3);
-}
-
+/* Thông tin nhận hàng */
+.shipping-info-card { background: #fff; border: 1px solid var(--cream2); border-radius: 16px; overflow: hidden; }
+.sic-header { display: flex; align-items: center; gap: 14px; padding: 22px 24px; background: var(--page); border-bottom: 1px solid var(--cream2); }
+.sic-icon { width: 40px; height: 40px; background: var(--rust); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.sic-title { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.sic-sub { font-size: 13px; color: var(--ink3); }
 .sic-filled-tag {
-    margin-left: auto;
-    display: inline-flex; align-items: center; gap: 6px;
-    background: #F0FDF4; color: #16A34A;
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-    padding: 6px 12px; border-radius: 20px;
-    border: 1px solid #BBF7D0;
+    margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+    background: #F0FDF4; color: #16A34A; font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 20px; border: 1px solid #BBF7D0;
 }
-
-.sic-body {
-    padding: 28px 24px;
-    display: flex; flex-direction: column; gap: 18px;
-}
-
-.sic-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
+.sic-body { padding: 28px 24px; display: flex; flex-direction: column; gap: 18px; }
+.sic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .sic-row-3 { grid-template-columns: 1fr 1fr 1fr; }
-
 .sic-field { display: flex; flex-direction: column; gap: 7px; }
-
-.sic-label {
-    font-family: var(--font-menu); font-size: 13px;
-    font-weight: 600; color: var(--ink);
-    display: flex; align-items: center; gap: 4px;
-}
+.sic-label { font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 4px; }
 .sic-required { color: var(--rust); }
-
 .sic-input {
-    font-family: var(--font-menu); font-size: 14px;
-    padding: 12px 16px;
-    border: 1.5px solid var(--cream2);
-    border-radius: 10px;
-    background: #fff; color: var(--ink);
-    outline: none; transition: 0.2s; width: 100%;
+    font-size: 14px; padding: 12px 16px; border: 1.5px solid var(--cream2); border-radius: 10px;
+    background: #fff; color: var(--ink); outline: none; transition: 0.2s; width: 100%;
 }
 .sic-input::placeholder { color: var(--ink3); }
 .sic-input:focus { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(216,90,48,0.1); }
 .sic-input.valid { border-color: #16A34A; }
 .sic-input.invalid { border-color: #DC2626; }
-
 .sic-textarea { resize: vertical; min-height: 80px; }
 
-/* Select dropdown */
 .sic-select-wrap { position: relative; }
 .sic-select {
-    width: 100%; padding: 12px 40px 12px 16px;
-    border: 1.5px solid var(--cream2); border-radius: 10px;
-    background: #fff; color: var(--ink);
-    font-family: var(--font-menu); font-size: 14px;
-    outline: none; appearance: none; cursor: pointer;
-    transition: 0.2s;
+    width: 100%; padding: 12px 40px 12px 16px; border: 1.5px solid var(--cream2); border-radius: 10px;
+    background: #fff; color: var(--ink); font-size: 14px; outline: none; appearance: none; cursor: pointer; transition: 0.2s;
 }
 .sic-select:focus { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(216,90,48,0.1); }
 .sic-select:disabled { background: var(--page); color: var(--ink3); cursor: not-allowed; }
-.sic-select-arrow {
-    position: absolute; right: 14px; top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none; color: var(--ink3);
-}
+.sic-select-arrow { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--ink3); }
 
-/* Phương thức thanh toán */
 .sic-payment-opts { display: flex; flex-direction: column; gap: 10px; }
-
 .sic-payment-opt { cursor: pointer; }
 .sic-payment-opt input[type=radio] { display: none; }
-
-.sic-payment-box {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 18px;
-    border: 1.5px solid var(--cream2);
-    border-radius: 10px; background: #fff;
-    transition: 0.2s; cursor: pointer;
-}
-.sic-payment-opt input:checked + .sic-payment-box {
-    border-color: var(--rust);
-    background: #FEF7F4;
-    box-shadow: 0 0 0 3px rgba(216,90,48,0.08);
-}
+.sic-payment-box { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1.5px solid var(--cream2); border-radius: 10px; background: #fff; transition: 0.2s; cursor: pointer; }
+.sic-payment-opt input:checked + .sic-payment-box { border-color: var(--rust); background: #FEF7F4; box-shadow: 0 0 0 3px rgba(216,90,48,0.08); }
 .sic-payment-box:hover { border-color: var(--ink2); }
+.sic-pay-label { font-size: 14px; font-weight: 500; color: var(--ink); }
 
-.sic-pay-icon { font-size: 20px; }
-.sic-pay-label {
-    font-family: var(--font-menu); font-size: 14px;
-    font-weight: 500; color: var(--ink);
-}
-
-/* Thông tin chuyển khoản */
-.sic-bank-info {
-    background: #F8F6F0;
-    border: 1px solid var(--cream2);
-    border-radius: 10px;
-    padding: 16px 20px;
-    display: flex; flex-direction: column; gap: 10px;
-}
-.sic-bank-row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-family: var(--font-menu); font-size: 13px;
-}
-.sic-bank-label { color: var(--ink3); }
-.sic-bank-value { font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-.sic-bank-note { color: var(--rust); }
-.sic-copy-btn {
-    display: inline-flex; align-items: center; gap: 4px;
-    background: var(--ink); color: #fff;
-    border: none; border-radius: 6px;
-    padding: 4px 10px; font-size: 11px; font-weight: 600;
-    cursor: pointer; font-family: var(--font-mono);
-    transition: background 0.2s;
-}
-.sic-copy-btn:hover { background: var(--rust); }
-
-/* Error */
 .sic-error {
-    background: #FEF2F2; border: 1px solid #FECACA;
-    color: #B91C1C; border-radius: 8px;
-    padding: 12px 16px; font-family: var(--font-menu); font-size: 13px;
-    display: flex; align-items: center; gap: 8px;
+    background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; border-radius: 8px;
+    padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px;
 }
 
-/* ---- Cột phải: Summary ---- */
+/* Tóm tắt đơn hàng */
 .cart-summary-col { position: relative; }
-.cart-summary-card {
-    background: #fff; border: 1px solid var(--cream2);
-    border-radius: 16px; padding: 28px 24px;
-    position: sticky; top: 100px;
-}
-.cart-summary-title {
-    font-family: var(--font-display); font-size: 26px; font-weight: 500;
-    color: var(--ink); margin-bottom: 20px;
-}
+.cart-summary-card { background: #fff; border: 1px solid var(--cream2); border-radius: 16px; padding: 28px 24px; position: sticky; top: 100px; }
+.cart-summary-title { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 20px; }
 .cart-summary-rows { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-.cart-summary-row {
-    display: flex; justify-content: space-between;
-    font-family: var(--font-menu); font-size: 14px; color: var(--ink2);
-}
+.cart-summary-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--ink2); }
 .cart-coupon { display: flex; gap: 8px; margin-bottom: 6px; }
-.cart-coupon-input {
-    flex: 1; padding: 10px 14px;
-    border: 1.5px solid var(--cream2); border-radius: 8px;
-    font-family: var(--font-menu); font-size: 13px; color: var(--ink);
-    outline: none; transition: border-color 0.2s;
-}
+.cart-coupon-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--cream2); border-radius: 8px; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.2s; }
 .cart-coupon-input:focus { border-color: var(--rust); }
 .cart-coupon-input::placeholder { color: var(--ink3); }
-.cart-coupon-btn {
-    padding: 10px 16px; background: var(--ink); color: #fff;
-    border: none; border-radius: 8px; font-family: var(--font-menu);
-    font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
-    transition: background 0.2s;
-}
+.cart-coupon-btn { padding: 10px 16px; background: var(--ink); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
 .cart-coupon-btn:hover { background: var(--rust); }
-.cart-coupon-msg { font-family: var(--font-mono); font-size: 12px; min-height: 18px; margin-bottom: 8px; }
+.cart-coupon-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.cart-coupon-msg { font-size: 13px; min-height: 18px; margin-bottom: 8px; }
 .cart-summary-divider { height: 1px; background: var(--cream2); margin: 16px 0; }
-.cart-summary-total {
-    display: flex; justify-content: space-between; align-items: baseline;
-    margin-bottom: 4px; font-family: var(--font-menu); font-size: 15px;
-    font-weight: 700; color: var(--ink);
-}
-.cart-total-price {
-    font-family: var(--font-display); font-size: 32px; font-weight: 600;
-    color: var(--rust); letter-spacing: -0.5px;
-}
-.cart-summary-note {
-    font-family: var(--font-mono); font-size: 11px; color: var(--ink3); margin-bottom: 20px;
-}
-.cart-checkout-btn {
-    width: 100%; justify-content: center; padding: 15px;
-    font-size: 15px; border-radius: 10px; gap: 10px; margin-bottom: 16px;
-}
+.cart-summary-total { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; font-size: 15px; font-weight: 700; color: var(--ink); }
+.cart-total-price { font-size: 30px; font-weight: 700; color: var(--rust); letter-spacing: -0.5px; }
+.cart-summary-note { font-size: 12px; color: var(--ink3); margin-bottom: 20px; }
+.cart-checkout-btn { width: 100%; justify-content: center; padding: 15px; font-size: 15px; border-radius: 10px; gap: 10px; margin-bottom: 16px; }
 .cart-trust-badges { display: flex; flex-direction: column; gap: 8px; }
-.trust-item {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-mono); font-size: 11px; color: var(--ink3);
-}
-.cart-suggest {
-    margin-top: 16px; background: #fff;
-    border: 1px solid var(--cream2); border-radius: 12px; padding: 20px;
-}
-.cart-suggest-title {
-    font-family: var(--font-mono); font-size: 11px; color: var(--ink3);
-    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;
-}
-.cart-suggest-link {
-    display: block; padding: 10px 0; font-family: var(--font-menu);
-    font-size: 13px; font-weight: 600; color: var(--ink2);
-    border-bottom: 1px solid var(--cream2); transition: color 0.2s;
-}
-.cart-suggest-link:last-child { border-bottom: none; }
-.cart-suggest-link:hover { color: var(--rust); }
+.trust-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink3); }
 
-/* Modal */
-.cart-confirm-overlay {
-    position: fixed; inset: 0; background: rgba(44,44,42,0.6);
-    backdrop-filter: blur(4px); z-index: 9999;
-    display: flex; align-items: center; justify-content: center;
-}
-.cart-confirm-box {
-    background: #fff; border-radius: 20px; padding: 48px 40px;
-    text-align: center; max-width: 380px; width: 90%;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.15);
-}
+/* Modal xác nhận */
+.cart-confirm-overlay { position: fixed; inset: 0; background: rgba(44,44,42,0.6); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+.cart-confirm-box { background: #fff; border-radius: 20px; padding: 48px 40px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 24px 64px rgba(0,0,0,0.15); }
 .cart-confirm-icon { font-size: 48px; margin-bottom: 16px; }
-.cart-confirm-box h3 {
-    font-family: var(--font-display); font-size: 28px;
-    color: var(--ink); margin-bottom: 10px;
-}
-.cart-confirm-box p {
-    font-family: var(--font-menu); font-size: 14px; color: var(--ink2);
-    line-height: 1.6; margin-bottom: 28px;
-}
+.cart-confirm-box h3 { font-family: var(--font-display); font-size: 26px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+.cart-confirm-box p { font-size: 14px; color: var(--ink2); line-height: 1.6; margin-bottom: 28px; }
 .cart-confirm-btns { display: flex; gap: 12px; justify-content: center; }
-.cart-confirm-cancel {
-    flex: 1; padding: 13px; border: 1.5px solid var(--cream2);
-    border-radius: 10px; background: #fff; font-family: var(--font-menu);
-    font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; transition: 0.2s;
-}
+.cart-confirm-cancel { flex: 1; padding: 13px; border: 1.5px solid var(--cream2); border-radius: 10px; background: #fff; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; transition: 0.2s; }
 .cart-confirm-cancel:hover { border-color: var(--ink); }
 .cart-confirm-ok { flex: 1; padding: 13px; border-radius: 10px; font-size: 14px; justify-content: center; }
 </style>
 
 <script>
-const COUPONS = {
-    "HANDMADE10": { type: "percent", value: 10,    label: "Giảm 10%" },
-    "SOUL20":     { type: "percent", value: 20,    label: "Giảm 20%" },
-    "FREESHIP":   { type: "flat",    value: 30000, label: "Giảm 30.000đ" },
-};
+/* Phí ship chỉ để HIỂN THỊ — server mới là nơi quyết định (includes/shop_helpers.php).
+   Nếu đổi 2 số này, nhớ đổi cả SHIP_FREE_THRESHOLD và SHIP_FEE trong shop_helpers.php. */
 const SHIP_FREE_THRESHOLD = 500000;
 const SHIP_FEE = 35000;
-let activeCoupon = null;
+
+/* Mã giảm giá: số tiền giảm do SERVER tính (api/validate_coupon.php) */
+let activeCouponCode = "";   // mã đã áp dụng thành công
+let couponDiscount   = 0;    // số tiền giảm server trả về
 
 /* ---- Helpers ---- */
 function getCart() {
@@ -745,6 +437,40 @@ function fmt(n) { return Number(n).toLocaleString("vi-VN") + "đ"; }
 function escHtml(s) {
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
                     .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ---- Mã giảm giá ---- */
+function setCouponMsg(text, ok) {
+    var msgEl = document.getElementById("coupon-msg");
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.style.color = ok ? "#16A34A" : "#DC2626";
+}
+function resetCoupon() {
+    activeCouponCode = "";
+    couponDiscount = 0;
+}
+function callCouponApi(code) {
+    var items = getCart().map(function(i){ return { id: i.id, qty: i.qty || 1 }; });
+    return fetch("api/validate_coupon.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code, items: items })
+    }).then(function(r){ return r.json(); });
+}
+/* Giỏ hàng đổi (số lượng, xóa) → kiểm tra lại mã vì mức giảm / đơn tối thiểu có thể đổi */
+function refreshCoupon() {
+    if (!activeCouponCode) return;
+    callCouponApi(activeCouponCode).then(function(data) {
+        if (data.success) {
+            couponDiscount = data.discount;
+            setCouponMsg("✓ Đang áp dụng: " + data.label, true);
+        } else {
+            resetCoupon();
+            setCouponMsg(data.message || "Mã không còn hợp lệ.", false);
+        }
+        updateSummary(getCart());
+    }).catch(function(){ /* giữ nguyên nếu mất mạng */ });
 }
 
 /* ---- Render giỏ hàng ---- */
@@ -780,7 +506,7 @@ function renderCart() {
             + '<div class="cart-item-product">'
             +   '<div class="cart-item-img">' + imgHTML + '</div>'
             +   '<div>'
-            +     '<div class="cart-item-name" onclick="location.href=\'product.php?id=' + item.id + '\'">' + escHtml(item.name) + '</div>'
+            +     '<div class="cart-item-name" onclick="location.href=\'product.php?id=' + encodeURIComponent(item.id) + '\'">' + escHtml(item.name) + '</div>'
             +     '<button class="cart-item-remove" onclick="removeItem(' + idx + ')">'
             +       '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
             +       ' Xóa</button>'
@@ -802,12 +528,7 @@ function renderCart() {
 function updateSummary(cart) {
     var subtotal = cart.reduce(function(s,i){ return s + i.price*(i.qty||1); }, 0);
     var shipping = subtotal >= SHIP_FREE_THRESHOLD ? 0 : SHIP_FEE;
-    var discount = 0;
-    if (activeCoupon) {
-        discount = activeCoupon.type === "percent"
-            ? Math.round(subtotal * activeCoupon.value / 100)
-            : activeCoupon.value;
-    }
+    var discount = Math.min(couponDiscount, subtotal + shipping);
     var total = Math.max(0, subtotal + shipping - discount);
 
     function el(id){ return document.getElementById(id); }
@@ -835,12 +556,12 @@ function changeQty(idx, delta) {
     var cart = getCart();
     if (!cart[idx]) return;
     cart[idx].qty = Math.max(1, (cart[idx].qty||1) + delta);
-    saveCart(cart); renderCart();
+    saveCart(cart); renderCart(); refreshCoupon();
 }
 function removeItem(idx) {
     var cart = getCart();
     cart.splice(idx, 1);
-    saveCart(cart); renderCart();
+    saveCart(cart); renderCart(); refreshCoupon();
 }
 
 /* ---- Địa chỉ ---- */
@@ -934,7 +655,7 @@ function loadWards(dCode, selWard) {
 function showSicError(msg, focusId) {
     var errEl = document.getElementById("sic-error");
     if (!errEl) return;
-    errEl.innerHTML = "⚠️ " + msg;
+    errEl.textContent = "⚠️ " + msg;
     errEl.style.display = "flex";
     errEl.scrollIntoView({ behavior: "smooth", block: "center" });
     var el = document.getElementById(focusId);
@@ -993,38 +714,36 @@ document.addEventListener("DOMContentLoaded", function() {
     var okBtn = document.getElementById("confirm-ok");
     if (okBtn) okBtn.addEventListener("click", function(){
         saveCart([]);
+        resetCoupon();
+        setCouponMsg("", true);
         if(overlay) overlay.style.display="none";
         renderCart();
     });
 
-    /* Mã giảm giá */
+    /* Mã giảm giá — hỏi server */
     var couponBtn = document.getElementById("coupon-btn");
     if (couponBtn) couponBtn.addEventListener("click", function() {
-        var code   = document.getElementById("coupon-input").value.trim().toUpperCase();
-        var msgEl  = document.getElementById("coupon-msg");
-        var coupon = COUPONS[code];
-        if (!code) { msgEl.textContent = "Vui lòng nhập mã giảm giá."; msgEl.style.color = "#DC2626"; return; }
-        if (!coupon) {
-            msgEl.textContent = "Mã không hợp lệ hoặc đã hết hạn."; msgEl.style.color = "#DC2626";
-            activeCoupon = null;
-        } else {
-            activeCoupon = coupon;
-            msgEl.textContent = "✓ Áp dụng thành công: " + coupon.label; msgEl.style.color = "#16A34A";
-        }
-        updateSummary(getCart());
-    });
+        var input = document.getElementById("coupon-input");
+        var code  = input.value.trim().toUpperCase();
+        if (!code) { setCouponMsg("Vui lòng nhập mã giảm giá.", false); return; }
 
-    /* Thanh toán */
-    document.querySelectorAll("input[name=payment]").forEach(function(radio) {
-        radio.addEventListener("change", function() {
-            var bankInfo = document.getElementById("sic-bank-info");
-            if (bankInfo) bankInfo.style.display = this.value === "bank" ? "flex" : "none";
+        couponBtn.disabled = true;
+        callCouponApi(code).then(function(data) {
+            couponBtn.disabled = false;
+            if (data.success) {
+                activeCouponCode = code;
+                couponDiscount   = data.discount;
+                input.value      = code;
+                setCouponMsg("✓ Áp dụng thành công: " + data.label, true);
+            } else {
+                resetCoupon();
+                setCouponMsg(data.message || "Mã không hợp lệ hoặc đã hết hạn.", false);
+            }
+            updateSummary(getCart());
+        }).catch(function() {
+            couponBtn.disabled = false;
+            setCouponMsg("Lỗi kết nối, vui lòng thử lại.", false);
         });
-    });
-    var phoneEl = document.getElementById("ship-phone");
-    if (phoneEl) phoneEl.addEventListener("input", function() {
-        var noteEl = document.getElementById("bank-transfer-note");
-        if (noteEl && this.value) noteEl.textContent = "SH" + this.value;
     });
 
     /* Checkout */
@@ -1052,15 +771,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var provinceName = provinceElG.options[provinceElG.selectedIndex] ? provinceElG.options[provinceElG.selectedIndex].text : "";
         var districtName = districtElG.options[districtElG.selectedIndex] ? districtElG.options[districtElG.selectedIndex].text : "";
         var wardName     = wardElG.options[wardElG.selectedIndex] ? wardElG.options[wardElG.selectedIndex].text : "";
-
-        var subtotal = cart.reduce(function(s,i){ return s+i.price*(i.qty||1); }, 0);
-        var shipping = subtotal >= SHIP_FREE_THRESHOLD ? 0 : SHIP_FEE;
-        var discountAmt = activeCoupon
-            ? (activeCoupon.type === "percent" ? Math.round(subtotal*activeCoupon.value/100) : activeCoupon.value)
-            : 0;
-        var total = Math.max(0, subtotal + shipping - discountAmt);
         var paymentMethod = document.querySelector("input[name=payment]:checked");
 
+        /* Chỉ gửi id + số lượng + mã đã áp dụng. Giá, ship, giảm giá, tổng tiền do server tự tính. */
         var payload = {
             receiver_name:  name,
             receiver_phone: phone,
@@ -1069,9 +782,8 @@ document.addEventListener("DOMContentLoaded", function() {
             address:  address,
             note:     (document.getElementById("ship-note")||{value:""}).value.trim(),
             payment_method: paymentMethod ? paymentMethod.value : "cod",
-            coupon_code: (document.getElementById("coupon-input")||{value:""}).value.trim().toUpperCase(),
-            subtotal: subtotal, shipping_fee: shipping, discount: discountAmt, total: total,
-            items: cart,
+            coupon_code: activeCouponCode,
+            items: cart.map(function(i){ return { id: i.id, qty: i.qty || 1 }; }),
         };
 
         var btn      = document.getElementById("checkout-btn");
@@ -1089,10 +801,10 @@ document.addEventListener("DOMContentLoaded", function() {
             if (data.success) {
                 localStorage.removeItem("sh_cart");
                 localStorage.removeItem("sh_ship_draft");
-                window.location.href = "order-success.php?code=" + data.order_code;
+                window.location.href = "order-success.php?code=" + encodeURIComponent(data.order_code);
             } else {
                 btn.disabled = false; btn.innerHTML = origHTML;
-                if (errEl) { errEl.innerHTML = "⚠️ " + data.message; errEl.style.display = "flex"; errEl.scrollIntoView({behavior:"smooth",block:"center"}); }
+                if (errEl) { errEl.textContent = "⚠️ " + data.message; errEl.style.display = "flex"; errEl.scrollIntoView({behavior:"smooth",block:"center"}); }
             }
         })
         .catch(function() {

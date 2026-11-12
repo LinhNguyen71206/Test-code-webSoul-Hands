@@ -3,6 +3,7 @@
 // shop.php — Tất cả sản phẩm (lọc theo danh mục, sắp xếp, phân trang)
 // ============================================================
 require_once 'config/database.php';
+require_once 'includes/product-card.php';
 
 $per_page = 12;
 
@@ -245,51 +246,7 @@ include 'includes/header.php';
         <!-- Lưới sản phẩm -->
         <div class="products-grid">
             <?php if (!empty($products)): ?>
-                <?php foreach ($products as $row): ?>
-                <div class="product-card">
-                    <div class="product-img" onclick="location.href='product.php?id=<?= (int)$row['id'] ?>'">
-                        <?php if (!empty($row['image_url'])): ?>
-                            <img src="<?= htmlspecialchars($row['image_url']) ?>"
-                                 alt="<?= htmlspecialchars($row['name']) ?>"
-                                 class="real-product-img">
-                        <?php else: ?>
-                            <div class="fallback-img <?= htmlspecialchars($row['image_class'] ?? '') ?>"></div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($row['badge'])): ?>
-                            <div class="product-badge <?= $row['badge'] === 'Mới' ? 'new-badge' : '' ?>">
-                                <?= htmlspecialchars($row['badge']) ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="price-floating-badge">
-                            <?= number_format($row['price'], 0, ',', '.') ?>đ
-                        </div>
-                    </div>
-                    <div class="product-body">
-                        <h3 class="product-name" onclick="location.href='product.php?id=<?= (int)$row['id'] ?>'">
-                            <?= htmlspecialchars($row['name']) ?>
-                        </h3>
-                        <div class="product-actions">
-                            <button class="btn-add-cart"
-                                data-id="<?= (int)$row['id'] ?>"
-                                data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                                data-price="<?= (int)$row['price'] ?>"
-                                data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                                Giỏ hàng
-                            </button>
-                            <button class="btn-buy-now"
-                                data-id="<?= (int)$row['id'] ?>"
-                                data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                                data-price="<?= (int)$row['price'] ?>"
-                                data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                                Mua ngay
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
+                <?php foreach ($products as $row) render_product_card($row); ?>
             <?php else: ?>
                 <div class="no-results">
                     <div class="no-results-icon">🏺</div>

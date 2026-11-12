@@ -10,7 +10,6 @@ if (isset($_SESSION['user_id'])) {
 }
 
 $error   = '';
-$success = '';
 $form    = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -194,7 +193,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-color: var(--rust);
             box-shadow: 0 0 0 3px rgba(216,90,48,0.1);
         }
-        .auth-input.error { border-color: #F87171; }
 
         /* Password strength bar */
         .pw-strength-bar {

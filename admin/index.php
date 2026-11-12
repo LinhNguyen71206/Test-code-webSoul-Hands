@@ -39,7 +39,7 @@ $recent_orders = $conn->query("
 
 // Doanh thu 7 ngày gần nhất (chỉ đơn đã giao thành công)
 $revenue_7d = $conn->query("
-    SELECT DATE(created_at) as day, SUM(total) as rev, COUNT(*) as cnt
+    SELECT DATE(created_at) as day, SUM(total) as rev
     FROM orders 
     WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) AND status = 'delivered' 
     GROUP BY DATE(created_at)
@@ -52,7 +52,7 @@ while ($row = $revenue_7d->fetch_assoc()) {
 
 // Sản phẩm bán chạy (chỉ từ đơn đã giao thành công)
 $top_products = $conn->query("
-    SELECT oi.product_name, SUM(oi.quantity) as sold, SUM(oi.subtotal) as revenue
+    SELECT oi.product_name, SUM(oi.quantity) as sold
     FROM order_items oi
     JOIN orders o ON oi.order_id = o.id
     WHERE o.status = 'delivered' 
@@ -97,14 +97,8 @@ $payment_labels = ['cod' => 'COD'];
         --ink2:     #4A4A48;
         --ink3:     #9A9890;
         --rust:     #D85A30;
-        --rust-lt:  #FAECE7;
         --green:    #16A34A;
-        --green-lt: #F0FDF4;
-        --amber:    #F59E0B;
-        --amber-lt: #FFFBEB;
         --blue:     #3B82F6;
-        --blue-lt:  #EFF6FF;
-        --purple:   #8B5CF6;
         --sidebar-w: 240px;
         --header-h:  64px;
     }
@@ -237,11 +231,6 @@ $payment_labels = ['cod' => 'COD'];
         transition: box-shadow 0.2s;
     }
     .stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-    .stat-card-icon {
-        width: 40px; height: 40px; border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px; margin-bottom: 14px;
-    }
     .stat-card-label {
         font-size: 12px; color: var(--ink3); font-weight: 500;
         text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
@@ -255,7 +244,6 @@ $payment_labels = ['cod' => 'COD'];
     }
 
     /* ---- GRID 2 CỘT ---- */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
     .grid-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
 
     /* ---- CARD ---- */
@@ -386,8 +374,6 @@ $payment_labels = ['cod' => 'COD'];
     .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
     .btn-primary { background: var(--ink); color: #fff; }
     .btn-primary:hover { background: var(--rust); }
-    .btn-danger { background: #DC2626; color: #fff; }
-    .btn-danger:hover { background: #B91C1C; }
 
     /* ---- EMPTY STATE ---- */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--ink3); }
@@ -407,7 +393,6 @@ $payment_labels = ['cod' => 'COD'];
     .admin-toast.error   { background: #1A1C18; color: #F87171; }
 
     /* ---- MISC ---- */
-    .text-right { text-align: right; }
     .text-mono { font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; font-size: 12px; }
     .flex-gap { display: flex; gap: 8px; align-items: center; }
     .product-thumb {
@@ -420,15 +405,6 @@ $payment_labels = ['cod' => 'COD'];
         display: flex; align-items: center; justify-content: center;
         font-size: 18px; flex-shrink: 0;
     }
-    .pagination { display: flex; gap: 6px; justify-content: flex-end; padding: 16px 24px; }
-    .page-btn {
-        width: 32px; height: 32px; border-radius: 6px;
-        border: 1px solid var(--border); background: #fff;
-        font-size: 13px; cursor: pointer; transition: 0.15s;
-        display: flex; align-items: center; justify-content: center;
-    }
-    .page-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .page-btn:hover:not(.active) { border-color: var(--ink); }
     </style>
 </head>
 <body>

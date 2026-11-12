@@ -5,6 +5,7 @@
 ob_start();
 session_start();
 require_once 'config/database.php';
+require_once 'includes/product-card.php';
 
 // ── Từ khoá ──────────────────────────────────────────────────
 $q    = trim($_GET['q'] ?? '');
@@ -342,89 +343,19 @@ function search_url($q, $sort = 'popular') {
     <div class="srp-section">
         <div class="srp-products-grid">
             <?php foreach ($products as $row):
-                // Highlight từ khoá trong tên sản phẩm
+                // Làm nổi từ khóa trong tên sản phẩm (đã escape trước khi chèn <mark>)
                 $highlighted_name = preg_replace(
                     '/(' . preg_quote(htmlspecialchars($q), '/') . ')/iu',
                     '<mark style="background:#FAECE7;color:var(--rust);border-radius:3px;padding:0 2px;">$1</mark>',
                     htmlspecialchars($row['name'])
                 );
-            ?>
-            <div class="product-card">
-                <div class="product-img" onclick="location.href='product.php?id=<?= $row['id'] ?>'">
-                    <?php if (!empty($row['image_url'])): ?>
-                        <img src="<?= htmlspecialchars($row['image_url']) ?>"
-                             alt="<?= htmlspecialchars($row['name']) ?>"
-                             class="real-product-img">
-                    <?php else: ?>
-                        <div class="fallback-img <?= htmlspecialchars($row['image_class'] ?? '') ?>"></div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($row['badge'])): ?>
-                        <div class="product-badge <?= $row['badge'] === 'Mới' ? 'new-badge' : '' ?>">
-                            <?= htmlspecialchars($row['badge']) ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="price-floating-badge">
-                        <?= number_format($row['price'], 0, ',', '.') ?>đ
-                    </div>
-                </div>
-                <div class="product-body">
-                    <h3 class="product-name" onclick="location.href='product.php?id=<?= $row['id'] ?>'">
-                        <?= $highlighted_name ?>
-                    </h3>
-                    <?php if (!empty($row['category_name'])): ?>
-                    <div style="font-family:var(--font-mono);font-size:10px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">
-                        <?= htmlspecialchars($row['category_name']) ?>
-                    </div>
-                    <?php endif; ?>
-                    <div class="product-actions">
-                        <button class="btn-add-cart"
-                            data-id="<?= $row['id'] ?>"
-                            data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                            data-price="<?= (int)$row['price'] ?>"
-                            data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                            Giỏ hàng
-                        </button>
-                        <button class="btn-buy-now"
-                            data-id="<?= $row['id'] ?>"
-                            data-name="<?= htmlspecialchars($row['name'], ENT_QUOTES) ?>"
-                            data-price="<?= (int)$row['price'] ?>"
-                            data-image="<?= htmlspecialchars($row['image_url'] ?? '', ENT_QUOTES) ?>">
-                            Mua ngay
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
+                render_product_card($row, ['name_html' => $highlighted_name, 'show_category' => true]);
+            endforeach; ?>
         </div>
     </div>
 
     <?php endif; // end has results ?>
 
 </main>
-
-<script>
-// Sort dropdown
-(function() {
-    const btn  = document.getElementById('srp-sort-btn');
-    const menu = document.getElementById('srp-sort-menu');
-    if (!btn || !menu) return;
-
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-    });
-    document.addEventListener('click', function(e) {
-        if (!btn.contains(e.target) && !menu.contains(e.target)) {
-            menu.classList.remove('open');
-        }
-    });
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') menu.classList.remove('open');
-    });
-})();
-</script>
 
 <?php include 'includes/footer.php'; ?>
